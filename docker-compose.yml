@@ -1,0 +1,39 @@
+version: '3'
+services:
+  server:
+    build: ./server
+    ports:
+      - "80:80"
+    networks:
+      - rede-teste
+
+  client-legit:
+    build: ./client
+    networks:
+      - rede-teste
+    depends_on:
+      - server
+
+  attacker:
+    build: ./attacker
+    networks:
+      - rede-teste
+    depends_on:
+      - server
+
+  monitor:
+    build: .
+    ports:
+      - "8501:8501"
+    networks:
+      - rede-teste
+    volumes:
+      - ./app:/app
+    depends_on:
+      - server
+    cap_add:
+      - NET_ADMIN  # Permite que o contêiner capture pacotes de rede
+
+networks:
+  rede-teste:
+    driver: bridge
