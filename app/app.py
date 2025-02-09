@@ -3,10 +3,13 @@ import time
 import pandas as pd
 import streamlit as st
 import plotly.express as px
-from scapy.all import sniff
+from scapy.all import sniff, get_if_list
 from datetime import datetime
 
 st.set_page_config(layout="wide")
+
+# Obter lista de interfaces de rede disponíveis
+interfaces = get_if_list()
 
 # Variáveis globais
 packet_list = []
@@ -195,14 +198,14 @@ def main():
     st.sidebar.title("Configurações")
 
     # Configurações de interface e filtros
-    interface = st.sidebar.text_input("Interface", value="WiFi")
+    selected_interface = st.sidebar.selectbox("Selecione a interface de rede para análise:", interfaces)
     filter_expression = st.sidebar.text_input("Filtro de Captura (ex: tcp, udp, icmp)", value="")
 
     # Iniciar captura em thread separada
     if st.sidebar.button("Iniciar Captura"):
-        st.sidebar.write(f"Capturando na interface: {interface}")
+        st.sidebar.write(f"Capturando na interface: {selected_interface}")
         sniffing = True  # Ativa o sinalizador de captura
-        capture_thread = threading.Thread(target=capture_packets, args=(interface, filter_expression))
+        capture_thread = threading.Thread(target=capture_packets, args=(selected_interface, filter_expression))
         capture_thread.daemon = True
         capture_thread.start()
 
@@ -220,7 +223,7 @@ def main():
     table_placeholder = col1.empty()
     chart_placeholder = col2.empty()
     attack_placeholder = col3.empty()
-    attackChart_placeholder = col4.empty()
+    attackchart_placeholder = col4.empty()
 
     # Mostrar pacotes capturados
     ant = 0
@@ -276,7 +279,7 @@ def main():
                 attack_counts.columns = ["Tipo de Ataque", "Quantidade"]
                 fig_attack = px.pie(attack_counts, values="Quantidade", names="Tipo de Ataque",
                                     title="Distribuição de Ataques por Tipo")
-                with attackChart_placeholder.container(height=450):
+                with attackchart_placeholder.container(height=450):
                     st.plotly_chart(fig_attack)  # Usa a largura total da coluna
 
             ant = len(df)
