@@ -1,6 +1,6 @@
-# client/Dockerfile
-FROM nginx:stable-alpine3.20-perl
-
-RUN apk add --no-cache curl
-
-CMD ["sh", "-c", "while true; do curl -s http://server:80; sleep 5; done"]
+FROM python:3.9-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+COPY . .
+CMD ["python", "client.py"]

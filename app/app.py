@@ -3,7 +3,8 @@ import time
 import pandas as pd
 import streamlit as st
 import plotly.express as px
-from scapy.all import sniff, get_if_list
+import socket
+from scapy.all import *
 from datetime import datetime
 
 st.set_page_config(layout="wide")
@@ -26,6 +27,17 @@ def format_timestamp(epoch_time):
 # Processamento de pacotes
 def process_packet(packet):
     global packet_list, attack_list, start_time
+
+    if IP in packet:
+            print(f"""
+    DEBUG - Pacote Detectado:
+    Camadas: {packet.layers()}
+    Sumário: {packet.summary()}
+    Origem: {packet[IP].src}
+    Destino: {packet[IP].dst}
+    Interface: {packet.sniffed_on}
+    Tamanho: {len(packet)}
+    """)
 
     # Se o tempo inicial ainda não foi definido, defina-o como o tempo do primeiro pacote
     if start_time is None:
@@ -182,11 +194,17 @@ def stopfilter(packet):  # Aceita um argumento (o pacote capturado)
 
 # Função para capturar pacotes
 def capture_packets(interface, filter_expression):
+    # Adicionar print para debug
+    print(f"Iniciando captura na interface {interface}")
+    print(f"IPs na rede: 172.18.0.1-5")
+    
+    # Modificar o sniff para capturar todo tráfego na subnet
     sniff(
-        iface=interface, # Interface de rede escolhida pelo usuário
-        prn=process_packet, # Função de processamento de pacotes
-        stop_filter=stopfilter, # Função criada para parar a captura
-        filter=filter_expression, # Filtro de captura escolhido pelo usuário
+        iface=interface,
+        prn=process_packet,
+        stop_filter=stopfilter,
+        monitor=True,  # Habilita modo promíscuo
+        filter=f"{filter_expression}" if filter_expression else "",  # Remove filtro de subnet
     )
 
 

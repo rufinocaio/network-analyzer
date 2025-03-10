@@ -1,11 +1,11 @@
-version: '3'
 services:
   server:
     build: ./server
     ports:
-      - "80:80"
+      - "8080:80"
     networks:
       - rede-teste
+    hostname: server
 
   client-legit:
     build: ./client
@@ -13,6 +13,9 @@ services:
       - rede-teste
     depends_on:
       - server
+    environment:
+      - SERVER_URL=http://server:80
+    hostname: client
 
   attacker:
     build: ./attacker
@@ -20,11 +23,15 @@ services:
       - rede-teste
     depends_on:
       - server
+    environment:
+      - TARGET_HOST=server
+    hostname: attacker
 
   monitor:
     build: .
     ports:
       - "8501:8501"
+      - "23:22"  # Adiciona porta SSH
     networks:
       - rede-teste
     volumes:
@@ -32,8 +39,18 @@ services:
     depends_on:
       - server
     cap_add:
-      - NET_ADMIN  # Permite que o contêiner capture pacotes de rede
+      - NET_ADMIN
+      - NET_RAW
+    privileged: true
+    tty: true        # Adiciona terminal
+    stdin_open: true # Permite interação
+    command: bash -c "ip link set eth0 promisc on && streamlit run app.py"
 
 networks:
   rede-teste:
     driver: bridge
+    ipam: 
+      config:
+        - subnet: 172.18.0.0/16
+          gateway: 172.18.0.1
+   

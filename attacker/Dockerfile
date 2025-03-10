@@ -1,6 +1,7 @@
-# attacker/Dockerfile
-FROM nginx:stable-alpine3.20-perl
-
-RUN apk add --no-cache nmap hping3 --update-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing
-
-CMD ["sh", "-c", "nmap -p 1-1000 server && hping3 -S -p 80 --flood server"]
+FROM python:3.9-slim
+WORKDIR /app
+RUN apt-get update && apt-get install -y libpcap-dev
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+COPY . .
+CMD ["python", "attack.py"]
