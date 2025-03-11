@@ -2,6 +2,7 @@ from scapy.all import *
 import random
 import time
 import os
+import sys
 
 def port_scan(target):
     """Simula Port Scanning"""
@@ -23,8 +24,7 @@ def icmp_flood(target):
     for _ in range(600):
         send(IP(dst=target)/ICMP(), verbose=0)
 
-def main():
-    target = os.getenv('TARGET_HOST', 'server')
+def main(target):
     print(f"Configurado para atacar: {target}")
     
     while True:
@@ -40,4 +40,4 @@ def main():
         time.sleep(random.randint(10, 30))
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1])

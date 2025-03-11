@@ -1,56 +1,46 @@
 services:
-  server:
-    build: ./server
-    ports:
-      - "8080:80"
-    networks:
-      - rede-teste
-    hostname: server
-
-  client-legit:
-    build: ./client
-    networks:
-      - rede-teste
-    depends_on:
-      - server
-    environment:
-      - SERVER_URL=http://server:80
-    hostname: client
-
-  attacker:
+  user1:
     build: ./attacker
+    container_name: user1
     networks:
       - rede-teste
-    depends_on:
-      - server
-    environment:
-      - TARGET_HOST=server
-    hostname: attacker
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+    tty: true
+    stdin_open: true
+
+  user2:
+    build: ./client
+    container_name: user2
+    networks:
+      - rede-teste
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+    tty: true
+    stdin_open: true
 
   monitor:
     build: .
     ports:
       - "8501:8501"
-      - "23:22"  # Adiciona porta SSH
+    container_name: monitor
     networks:
       - rede-teste
-    volumes:
-      - ./app:/app
-    depends_on:
-      - server
     cap_add:
-      - NET_ADMIN
       - NET_RAW
-    privileged: true
-    tty: true        # Adiciona terminal
-    stdin_open: true # Permite interação
-    command: bash -c "ip link set eth0 promisc on && streamlit run app.py"
+      - NET_ADMIN
+    tty: true
+    stdin_open: true
+    command: bash -c "source /opt/venv/bin/activate && streamlit run app.py"
 
 networks:
   rede-teste:
-    driver: bridge
-    ipam: 
+    driver: macvlan
+    driver_opts:
+      parent: WiFi
+    ipam:
       config:
-        - subnet: 172.18.0.0/16
-          gateway: 172.18.0.1
-   
+        - subnet: "192.168.2.0/24"
+          gateway: "192.168.2.1"

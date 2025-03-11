@@ -2,15 +2,15 @@ import requests
 import time
 import random
 import os
+import sys
 
-def legitimate_traffic():
+def legitimate_traffic(target):
     # Usa a variável de ambiente definida no docker-compose
-    server_url = os.getenv('SERVER_URL', 'http://server:80')
-    print(f"Iniciando tráfego legítimo para {server_url}")
+    print(f"Iniciando tráfego legítimo para {target}")
     
     while True:
         try:
-            response = requests.get(server_url)
+            response = requests.get(target)
             print(f"Request legítimo: Status {response.status_code}")
             time.sleep(random.uniform(1, 5))
         except Exception as e:
@@ -18,4 +18,4 @@ def legitimate_traffic():
             time.sleep(1)
 
 if __name__ == "__main__":
-    legitimate_traffic()
+    legitimate_traffic(sys.argv[1])
