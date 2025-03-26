@@ -13,7 +13,6 @@ RUN apt-get update && \
     iproute2 \
     openssh-server &&\
     apt-get clean 
-     
 
 RUN python3 -m venv /opt/venv
 

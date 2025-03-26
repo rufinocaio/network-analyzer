@@ -4,15 +4,18 @@ FROM ubuntu:latest
 # Atualizar o sistema e instalar dependências
 RUN apt-get update && \
     apt-get install -y \
-    python3 \
-    python3-pip \
+    python3-full \
     tcpdump \
     net-tools \
-    iputils-ping && \
-    apt-get clean
+    iputils-ping \
+    iproute2 \
+    openssh-server &&\
+    apt-get clean 
 
-# Instalar o Scapy
-RUN apt install -y python3-scapy python3-requests
+RUN python3 -m venv /opt/venv
+
+COPY requirements.txt .
+RUN /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 

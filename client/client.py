@@ -10,7 +10,8 @@ def legitimate_traffic(target):
     
     while True:
         try:
-            response = requests.get(target)
+            url = f"https://{target}"
+            response = requests.get(url)
             print(f"Request legítimo: Status {response.status_code}")
             time.sleep(random.uniform(1, 5))
         except Exception as e:

@@ -7,9 +7,8 @@ import sys
 def port_scan(target):
     """Simula Port Scanning"""
     print(f"Iniciando Port Scan contra {target}...")
-    for port in range(20, 81):
+    for port in range(2000, 21000):
         send(IP(dst=target)/TCP(dport=port, flags="S"), verbose=0)
-        time.sleep(3)
 
 def syn_flood(target):
     """Simula SYN Flood"""
@@ -37,7 +36,7 @@ def main(target):
         else:
             icmp_flood(target)
             
-        time.sleep(random.randint(10, 30))
+        time.sleep(random.randint(1, 5))
 
 if __name__ == "__main__":
     main(sys.argv[1])
