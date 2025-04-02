@@ -1,3 +1,15 @@
+# Modificar o IP e Interface de rede para as informações da sua rede
+networks:
+  rede-teste:
+    driver: ipvlan                   # if needed
+    driver_opts:
+      parent: wlp2s0
+    ipam:
+      config:
+        - subnet: 192.168.100.0/24
+          gateway: 192.168.100.1
+
+# Modificar os IPs dos containers para endereços livres na rede
 services:
   attacker1:
     build: ./attacker
@@ -22,13 +34,3 @@ services:
     tty: true
     stdin_open: true
     command: bash -c "source /opt/venv/bin/activate && python3 attack.py 192.168.100.1"
-
-networks:
-  rede-teste:
-    driver: ipvlan                   # if needed
-    driver_opts:
-      parent: wlp2s0
-    ipam:
-      config:
-        - subnet: 192.168.100.0/24
-          gateway: 192.168.100.1

@@ -1,6 +1,6 @@
 # Network Analyze
 
-**Network Analyze** é uma ferramenta de análise de tráfego de rede desenvolvida em Python, utilizando `streamlit` para construção interface web e `scapy` para a captura de pacotes em tempo real.
+**Network Analyze** é uma ferramenta de análise de tráfego de rede desenvolvida em Python, utilizando `streamlit` para construção interface web e `scapy` para a captura e simulação de pacotes em tempo real.
 
 ## 📌 Funcionalidades
 
@@ -19,19 +19,20 @@
 ## 🚀 Como Executar
 
 ### Pré-requisitos
-Certifique-se de ter o Python instalado e as dependências necessárias:
+Certifique-se de ter o docker instalado e as dependências necessárias:
 
 ```bash
-pip install scapy
-pip install streamlit
+pip install -r ./app/requirements.txt
 ```
 
 ### Executando o Projeto
 
 ```bash
-streamlit run app.py
+streamlit run ./app/app.py
 ```
 
-## 📜 Licença
-
-Este projeto está licenciado sob a licença MIT. Consulte o arquivo `LICENSE` para mais detalhes.
+### Executando simulações de ataque na rede
+A execução irá gerar dois containers que irão simular ataques aleatórios na rede conectada, é necessária configuração do arquivo compose.yaml
+```bash
+docker compose
+```
